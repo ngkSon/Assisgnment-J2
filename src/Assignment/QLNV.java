@@ -43,7 +43,10 @@ public class QLNV extends javax.swing.JFrame {
 
         addTable();
 
-        if (listNV.size() >= 2) {
+        if (listNV.size() <= 0) {
+            vitri = -1;
+
+        } else {
             vitri = 0;
             display(vitri);
         }
@@ -153,6 +156,7 @@ public class QLNV extends javax.swing.JFrame {
         jLabel3.setText("HỌ VÀ TÊN");
 
         tfAge.setBackground(new java.awt.Color(230, 230, 230));
+        tfAge.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
         tfAge.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tfAgeActionPerformed(evt);
@@ -355,7 +359,7 @@ public class QLNV extends javax.swing.JFrame {
 
         tfRecord.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         tfRecord.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        tfRecord.setText("1 / 10");
+        tfRecord.setText("...");
 
         javax.swing.GroupLayout pnNhapLieuLayout = new javax.swing.GroupLayout(pnNhapLieu);
         pnNhapLieu.setLayout(pnNhapLieuLayout);
@@ -439,7 +443,7 @@ public class QLNV extends javax.swing.JFrame {
                         .addGap(21, 21, 21)))
                 .addGap(31, 31, 31)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         pnNhapLieuLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {tfAge, tfCode, tfEmail, tfName, tfSalary});
@@ -484,7 +488,11 @@ public class QLNV extends javax.swing.JFrame {
     }//GEN-LAST:event_tfNameActionPerformed
 
     private void tfAgeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfAgeActionPerformed
-        // TODO add your handling code here:
+        try {
+            Integer.parseInt(tfAge.getText());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Tuổi phải nhập số!");
+        }
     }//GEN-LAST:event_tfAgeActionPerformed
 
     private void tfEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfEmailActionPerformed
@@ -541,18 +549,18 @@ public class QLNV extends javax.swing.JFrame {
     private void btExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btExitActionPerformed
         try {
             int hoi = JOptionPane.showConfirmDialog(null, "Bạn chắc chắn muốn thoát?");
-            if(hoi == JOptionPane.YES_OPTION){
+            if (hoi == JOptionPane.YES_OPTION) {
                 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("data.txt"));
                 oos.writeObject(listNV);
                 oos.flush();
                 oos.close();
-             System.exit(0);
+                System.exit(0);
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Lỗi!" + e);
         }
-        
-        
+
+
     }//GEN-LAST:event_btExitActionPerformed
 
     private void btNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNewActionPerformed
@@ -562,7 +570,7 @@ public class QLNV extends javax.swing.JFrame {
     private void btSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSaveActionPerformed
         try {
             if (vitri == -1) {
-
+                
                 addNhanvien();
                 vitri = listNV.size() - 1;
                 display(vitri);
@@ -572,7 +580,7 @@ public class QLNV extends javax.swing.JFrame {
             }
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Loi!!" + e);
+            JOptionPane.showMessageDialog(null, "Lỗi!");
         }
     }//GEN-LAST:event_btSaveActionPerformed
 
@@ -602,7 +610,16 @@ public class QLNV extends javax.swing.JFrame {
     private void btOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOpenActionPerformed
         try {
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream("data.txt"));
-            ois.readObject();
+            listNV = (ArrayList<NhanVien>) ois.readObject();
+            addTable();
+            if (listNV.size() > 0) {
+                vitri = 0;
+                display(vitri);
+                JOptionPane.showMessageDialog(null, "Mở thành công!");
+            } else {
+                clearForm();
+                JOptionPane.showMessageDialog(null, "Không có gì để mở!");
+            }
             ois.close();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Loi!!" + e);
@@ -764,8 +781,5 @@ public void display(int vitri) {
         listNV.remove(vitri);
         model.removeRow(vitri);
     }
-    public boolean saveFile(){
-        return false;
-       
-    }
+    
 }
