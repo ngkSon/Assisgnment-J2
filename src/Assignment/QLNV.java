@@ -208,6 +208,11 @@ public class QLNV extends javax.swing.JFrame {
         });
 
         btFind.setText("Find");
+        btFind.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btFindActionPerformed(evt);
+            }
+        });
 
         btExit.setText("Exit");
         btExit.addActionListener(new java.awt.event.ActionListener() {
@@ -570,7 +575,7 @@ public class QLNV extends javax.swing.JFrame {
     private void btSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSaveActionPerformed
         try {
             if (vitri == -1) {
-                
+
                 addNhanvien();
                 vitri = listNV.size() - 1;
                 display(vitri);
@@ -590,15 +595,19 @@ public class QLNV extends javax.swing.JFrame {
         if (row >= 0) {
             vitri = row;
             display(vitri);
+            JOptionPane.showMessageDialog(null, listNV.get(vitri).toString());
         }
+
     }//GEN-LAST:event_tbNhanVienMouseClicked
 
     private void btDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeleteActionPerformed
         try {
-            if (listNV.size() > 0) {
-                remove();
-                clearForm();
+            if (listNV.isEmpty()) {
+
+                JOptionPane.showMessageDialog(null, "Không còn giữu liệu để xóa!");
+                return;
             }
+            remove();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Chọn vị trí cần xóa!");
 
@@ -626,6 +635,29 @@ public class QLNV extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btOpenActionPerformed
 
+    private void btFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btFindActionPerformed
+        try {
+            String ma = JOptionPane.showInputDialog("Nhap id can tim");
+            boolean kq = false;
+            for (NhanVien x : listNV) {
+                if (x.getManv().equalsIgnoreCase(ma)) {
+                    vitri = listNV.indexOf(x);
+                    kq = true;
+                    display(vitri);
+                    break;
+                }
+            }
+            if (kq) {
+                JOptionPane.showMessageDialog(null, "Tim thanh cong!");
+            } else {
+JOptionPane.showMessageDialog(null, "Không tim thay!");
+            }
+        } catch (Exception e) {
+              JOptionPane.showMessageDialog(null, "Loi!!" + e);
+        }
+    }//GEN-LAST:event_btFindActionPerformed
+
+//---------------------------------------------------------------------------------------------
     /**
      * @param args the command line arguments
      */
@@ -727,13 +759,7 @@ public void display(int vitri) {
     }
 
     public void addNhanvien() {
-//        if (tfName.getText().equals("")
-//                || tfCode.getText().equals("")
-//                || tfEmail.getText().equals("")
-//                || tfSalary.getText().equals("")
-//                || tfAge.getText().equals("")) {
-//            JOptionPane.showMessageDialog(null, "Không được để trống!!");
-//        } else {
+
         listNV.add(new NhanVien(
                 tfCode.getText(),
                 tfName.getText(),
@@ -755,13 +781,7 @@ public void display(int vitri) {
     }
 
     public void updateNhanvien() {
-//        if (tfName.getText().equals("")
-//                || tfCode.getText().equals("")
-//                || tfEmail.getText().equals("")
-//                || tfSalary.getText().equals("")
-//                || tfAge.getText().equals("")) {
-//            JOptionPane.showMessageDialog(null, "Không được để trống!!");
-//        } else {
+
         listNV.set(vitri, new NhanVien(tfCode.getText(),
                 tfName.getText(),
                 tfEmail.getText(),
@@ -778,8 +798,19 @@ public void display(int vitri) {
     }
 
     public void remove() {
-        listNV.remove(vitri);
-        model.removeRow(vitri);
+        int thongbao = JOptionPane.showConfirmDialog(null, "Bạn có muốn xóa phần tử này không?");
+        if (thongbao == JOptionPane.YES_OPTION) {
+            listNV.remove(vitri);
+            model.removeRow(vitri);
+            if (listNV.isEmpty()) {
+                clearForm();
+            } else {
+                vitri = 0;
+                display(vitri);
+            }
+
+        }
+
     }
-    
+
 }
